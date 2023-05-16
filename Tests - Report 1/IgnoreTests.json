@@ -1,0 +1,20 @@
+[
+  {
+    "Check Type": "File Structure",
+    "Check Name": "Page dimensions for page 'Page 1'"
+  },
+  {
+    "Check Type": "File Structure",
+    "Check Name": "Report landing page is first page"
+  },
+  {
+    "Check Type": "File Structure",
+    "Check Name": "No filters applied to visual 'card (8913d)' on page 'Page 1'",
+    "Check Detail": "Advanced filter applied on 'Asset name'"
+  },
+  {
+    "Check Type": "File Structure",
+    "Check Name": "No filters applied to report",
+    "Check Detail": "Advanced filter applied on 'Activity ID'"
+  }
+]

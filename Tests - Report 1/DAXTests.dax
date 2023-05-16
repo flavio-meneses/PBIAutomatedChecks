@@ -1,0 +1,21 @@
+﻿define
+
+var countCalendarRows = { COUNTROWS ( 'Calendar' ) }
+
+var assetComplexityScore = { Maxx( FILTER( Earthworks, Earthworks[Asset ID] = "053-L2"), Earthworks[Complexity Score] ) }
+
+VAR tests=
+UNION (
+    ROW (
+        "TestName", "Count Calendar Rows",
+        "ExpectedValue", 2923,
+        "ActualValue", countCalendarRows
+    ),
+    ROW (
+        "TestName", "Asset ID 053-L2 Complexity Score",
+        "ExpectedValue", 33,
+        "ActualValue", assetComplexityScore
+    )
+)
+
+EVALUATE ADDCOLUMNS(tests, "Passed", [ExpectedValue] = [ActualValue])

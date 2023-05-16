@@ -1,0 +1,23 @@
+{
+   "systemSettings": [
+      {
+         "tenantId": "REPLACE WITH YOUR TENNANT ID",
+         "appId": "REPLACE WITH YOUR APP ID",
+         "appSecret": "REPLACE WITH YOUR APP SECRET"
+      }
+   ],
+   "reportSettings": [
+      {
+         "reportPath": "REPLACE WITH YOUR REPORT PATH USING DOUBLE BACKSLASHES \\",
+         "testsFolderPath": "REPLACE WITH YOUR TESTS FOLDER PATH USING DOUBLE BACKSLASHES \\",
+         "publishWorkspaceId": "REPLACE WITH YOUR WORKSPACE ID",
+         "runDAXtest": 1
+      },
+      {
+         "reportPath": "REPLACE WITH YOUR REPORT PATH USING DOUBLE BACKSLASHES \\",
+         "testsFolderPath": "REPLACE WITH YOUR TESTS FOLDER PATH USING DOUBLE BACKSLASHES \\",
+         "publishWorkspaceId": "REPLACE WITH YOUR WORKSPACE ID",
+         "runDAXtest": 1
+      }
+   ]
+}
