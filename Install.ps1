@@ -8,12 +8,25 @@
 # https://github.com/flavio-meneses
 # ===================================================================================
 
+# Download and extract files
+$repoSourceUrl = "https://github.com/flavio-meneses/PBIAutomatedChecks/archive/main.zip"
+$repoDownloadTarget = Join-Path $HOME "Downloads\PBIAutomatedChecks"
+try {
+    Invoke-RestMethod -Uri $repoSourceUrl -OutFile "$repoDownloadTarget.zip"
+    Expand-Archive -Path "$repoDownloadTarget.zip" -DestinationPath $repoDownloadTarget -Force
+    Write-Host "Files downloaded and extracted successfully"
+}
+catch {
+    Write-Host "Download failed. Error: $($_.Exception.Message)"
+}
+
 # Define paths
-$currentLocalPath = Split-Path $MyInvocation.MyCommand.Path -Parent #local path of this script
+$currentLocalPath = "$($repoDownloadTarget)\PBIAutomatedChecks-main" #local path of this script
 $externalToolTarget = "C:\Program Files (x86)\Common Files\Microsoft Shared\Power BI Desktop\External Tools"
 $automatedChecksTarget = "C:\PowerBI_AutomatedChecks"
     
-function runInstall {    
+function runInstall {  
+      
     #Copy Settings file
     Write-Host "Copying Settings.json"
             
@@ -26,6 +39,7 @@ function runInstall {
     Remove-Item -Path "$($automatedChecksTarget)\*" -Recurse -Force
 
     #Overwrites file if there's changes
+
     Copy-Item "$($currentLocalPath)\Settings.json" -Destination $automatedChecksTarget -Force
 
     # Loop through each subfolder in the source root folder
