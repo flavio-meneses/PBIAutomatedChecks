@@ -25,7 +25,10 @@ To run the "Page Structure" checks you'll need Admin rights to the machine to in
 To run the "Data" checks you'll need Global Administrator/Application Administrator role in Azure AD and Power BI Admin role to setup a [Service Principal](https://learn.microsoft.com/en-us/power-bi/developer/embedded/embed-service-principal) (detailed instructions coming soon). If you don't want, or are unable to set this up, you can disable these checks. You will also need a Power BI Pro Account to run these "Data" checks. 
 
 
-## Install
+## Install  
+
+[Instructions also available on YouTube](https://www.youtube.com/watch?v=z_7ksy044wE&ab_channel=Fl%C3%A1vioMeneses)
+
 1. Launch PowerShell as an Administrator
 
 <img src="https://user-images.githubusercontent.com/126802604/228036208-c79594dd-db5d-4768-8b4c-c3e59adad06c.png" width="50%">
