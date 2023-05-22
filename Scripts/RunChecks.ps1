@@ -26,7 +26,9 @@ Write-Host "$Database" -ForegroundColor Green
 Write-Host "---" 
 
 #Set Location to current script's
-Set-Location -Path $PSScriptRoot
+$scriptPath = $MyInvocation.MyCommand.Path
+$scriptDirectory = Split-Path -Path $scriptPath -Parent
+Set-Location -Path $scriptDirectory
 Write-host "Current Location: $(Get-Location)"
 
 #Imports Auxiliary Functions and Settings
@@ -46,7 +48,7 @@ try {
     $activePbix = $pbiSessions | Where-Object { $_.Port -eq $portNumber }
     $PbiFilePath = $activePbix.PbixPath
 
-    if ($PbiFilePath -eq $null) {
+    if ($null -eq $PbiFilePath) {
         Write-host "Can't find current .pbix file name."
         $PbiFilePath = Read-Host "Please enter the path of the file you want to check without quotation marks"
     }
