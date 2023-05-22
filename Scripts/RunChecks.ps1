@@ -17,7 +17,7 @@ param
 ) 
 
 $portNumber = $Server.Split(":")[1]
-        
+
 Write-Host "---" 
 Write-Host "Analysis Services Port Number: " -NoNewline 
 Write-Host "$portNumber" -ForegroundColor Yellow 
@@ -68,18 +68,13 @@ try {
     #region File structure checks
 
     #import settings for current .pbix
-    $countReportSettings = ($settings.reportSettings | Where-Object { $_.reportPath -eq $PbiFilePath }).Count
-    if ($countReportSettings -eq 0) {
-        Write-Host "No report tests found. Please check the report is present in the Settings file and the paths are correct" -ForegroundColor Red
-        Read-Host -Prompt 'Press [Enter] to close this window'
-        exit
+    $countReportSettings = 0
+    foreach ($reportSetting in $settings.reportSettings) {
+        if ($reportSetting.reportPath -eq $PbiFilePath) {
+            $countReportSettings++
+        }
     }
-    if ($countReportSettings -gt 1) {
-        Write-Host "Multiple tests found for the same report. Please ensure each report only has one entry under 'reportSettings' on the Settings file" -ForegroundColor Red
-        Read-Host -Prompt 'Press [Enter] to close this window'
-        exit
-    }
-    else {
+    if ($countReportSettings -eq 1) {
         foreach ($reportSetting in $settings.reportSettings) {
             if ($reportSetting.reportPath -eq $PbiFilePath) {
                 $workspaceId = $reportSetting.publishWorkspaceId
@@ -90,6 +85,16 @@ try {
                 $runDAXtest = [bool]$reportSetting.runDAXtest
             }
         }
+    }
+    elseif ($countReportSettings -gt 1) {
+        Write-Host "Multiple tests found for the same report. Please ensure each report only has one entry under 'reportSettings' on the Settings file" -ForegroundColor Red
+        Read-Host -Prompt 'Press [Enter] to close this window'
+        exit
+    }
+    else {
+        Write-Host "No report tests found. Please check the report is present in the Settings file and the paths are correct" -ForegroundColor Red
+        Read-Host -Prompt 'Press [Enter] to close this window'
+        exit
     }
 
     #Get all Sections (i.e. Pages) in report
