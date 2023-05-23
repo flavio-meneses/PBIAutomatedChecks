@@ -1,7 +1,0 @@
-[
-  {
-    "Check Type": "File Structure",
-    "Check Name": "Page dimensions for page 'Example Data Structure'",
-    "Detail": "Expecting default page size of 1280x720 but page is 1280x750"
-  }
-]

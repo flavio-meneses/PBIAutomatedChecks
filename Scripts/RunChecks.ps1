@@ -79,7 +79,7 @@ try {
             if ($reportSetting.reportPath -eq $PbiFilePath) {
                 $workspaceId = $reportSetting.publishWorkspaceId
                 $testsFolderPath = $reportSetting.testsFolderPath
-                Import-Module -Name "$($testsFolderPath)\FileStructureTests.psm1" -Force
+                Import-Module -Name ".\FileStructureTests.psm1" -Force
                 $DAXTests = Get-Content -Path "$($testsFolderPath)\DAXTests.dax" -Raw -Force
                 $ignoreTestsPath = "$($testsFolderPath)\ignoreTests.json"
                 $runDAXtest = [bool]$reportSetting.runDAXtest
