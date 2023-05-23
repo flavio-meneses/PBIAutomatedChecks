@@ -146,11 +146,14 @@ function CheckReportFilters {
         $checkType = "File Structure"
         $checkName = "No filters applied to report (filters on all pages)"
 
-        #'Where' attribute denotes active filters in the visual, so count these
-        $countFilters = ($reportFiltersJson | Where-Object { $_.filter.where }).Count
-
+        $countActiveFilters = 0 
+        foreach ($filter in $reportFiltersJson) {             
+            if ($filter.filter) {                            
+                $countActiveFilters++ 
+            }
+        }
         #no filters applied to report
-        if ($countFilters -eq 0) {
+        if ($countActiveFilters -eq 0) {
             # Verify if check should be ignored. No need to pass $detail as we already know there's no filters
             $ignoreCheck = IgnoreCheck -checkType $checkType -checkName $checkName -ignoreTestsPath $ignoreTestsPath
 
@@ -169,7 +172,7 @@ function CheckReportFilters {
             foreach ($filter in $reportFiltersJson) { 
                 $filterType = $filter.type
                 $filteredColumn = $filter.expression.Column.Property
-                $filterIsActive = if ($filter.filter.Where.Count -gt 0) { $true } else { $false }
+                $filterIsActive = if ($filter.filter) { $true } else { $false }
                 
                 #detail message
                 if ($filterIsActive) {
@@ -179,7 +182,6 @@ function CheckReportFilters {
                     $detail = "$filterType filter present but not applied on '$filteredColumn'"   
                 }
                  
-        
                 # Verify if check should be ignored
                 $ignoreCheck = IgnoreCheck -checkType $checkType -checkName $checkName -checkDetail $detail -ignoreTestsPath $ignoreTestsPath
 
@@ -242,11 +244,15 @@ function CheckPageFilters {
         $checkType = "File Structure"
         $checkName = "No filters applied on this page ($($pageName))"
 
-        #'Where' attribute denotes active filters in the visual, so count these
-        $countFilters = ($pageFiltersJson | Where-Object { $_.filter.where }).Count
+        $countActiveFilters = 0 
+        foreach ($filter in $reportFiltersJson) {             
+            if ($filter.filter) {                            
+                $countActiveFilters++ 
+            }
+        }
 
         #no filters applied to page
-        if ($countFilters -eq 0) {
+        if ($countActiveFilters -eq 0) {
             # Verify if check should be ignored. No need to pass $detail as we already know there's no filters
             $ignoreCheck = IgnoreCheck -checkType $checkType -checkName $checkName -ignoreTestsPath $ignoreTestsPath
 
@@ -265,7 +271,7 @@ function CheckPageFilters {
             foreach ($filter in $pageFiltersJson) { 
                 $filterType = $filter.type
                 $filteredColumn = $filter.expression.Column.Property
-                $filterIsActive = if ($filter.filter.Where.Count -gt 0) { $true } else { $false }
+                $filterIsActive = if ($filter.filter) { $true } else { $false }
                 
                 #detail message
                 if ($filterIsActive) {
@@ -352,11 +358,15 @@ function CheckVisualFilters {
             $checkType = "File Structure"
             $checkName = "No filters applied to visual '$visualName' on page '$pageName'"
 
-            #'Where' attribute denotes active filters in the visual, so count this
-            $countFilters = ($visualFiltersJson | Where-Object { $_.filter.where }).Count
+            $countActiveFilters = 0 
+            foreach ($filter in $visualFiltersJson) {             
+                if ($filter.filter) {                            
+                    $countActiveFilters++ 
+                }
+            }
 
             #no filters applied to visual
-            if ($countFilters -eq 0) {
+            if ($countActiveFilters -eq 0) {
                 # Verify if check should be ignored. No need to pass $detail as we already know there's no filters
                 $ignoreCheck = IgnoreCheck -checkType $checkType -checkName $checkName -ignoreTestsPath $ignoreTestsPath
 
@@ -374,17 +384,26 @@ function CheckVisualFilters {
                 #filters applied to visual
                 foreach ($filter in $visualFiltersJson) { 
                     $filterType = $filter.type
-                    $filteredColumn = $filter.expression.Column.Property
-                    #if filtered column returns null, this is an aggregation filter, i.e. for the value used in a card
-                    if (!$filteredColumn) { $filteredColumn = $filter.expression.Aggregation.Expression.Column.Property }   
-                    $filterIsActive = if ($filter.filter.Where.Count -gt 0) { $true } else { $false }
+
+                    # Checks if filter is applied to a Column, Measure or Aggregation
+                    $filterAppliedTo = if ($filter.expression.Column.Property) {
+                        $filter.expression.Column.Property
+                    }
+                    elseif ($filter.expression.Measure.Property) {
+                        $filter.expression.Measure.Property 
+                    }
+                    elseif ($filter.expression.Aggregation.Expression.Column.Property) {
+                        $filter.expression.Aggregation.Expression.Column.Property 
+                    }
+                    else { $null }
+                    $filterIsActive = if ($filter.filter) { $true } else { $false }
 
                     #detail message
                     if ($filterIsActive) {
-                        $detail = "$filterType filter applied on '$filteredColumn'"   
+                        $detail = "$filterType filter applied on '$filterAppliedTo'"   
                     }
                     else {
-                        $detail = "$filterType filter present but not applied on '$filteredColumn'"   
+                        $detail = "$filterType filter present but not applied on '$filterAppliedTo'"   
                     }
                 
                     # Verify if check should be ignored
@@ -401,7 +420,6 @@ function CheckVisualFilters {
                     #if check isn't ignored
                     else {
                         #Filter is Active
-
                         if ($filterIsActive) {
                             $resultDataRows += [PSCustomObject]@{
                                 "Check Type" = $checkType
@@ -493,7 +511,7 @@ function IgnoreCheck {
 
         #check input against list to ignore. If there's a match, check should be ignored
         foreach ($ignore in $ignoreChecks) { 
-            if ($ignore."Check Type" -eq $checkType -and $ignore."Check Name" -eq $checkName -and ($ignore."Check Detail" -eq $checkDetail -or [string]::IsNullOrEmpty($checkDetail))) {
+            if ($ignore."Check Type" -eq $checkType -and $ignore."Check Name" -eq $checkName -and ($ignore."Detail" -eq $checkDetail -or [string]::IsNullOrEmpty($checkDetail))) {
                 $ignoreChecksarray += $true
             }
             else {
